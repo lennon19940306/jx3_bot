@@ -81,7 +81,7 @@ class OpenServerRecvEvent(RecvEvent):
 
     @classmethod
     def get_api_type(cls):
-        return 2001
+        return 2011
 
 
 class NewsRecvEvent(RecvEvent):
@@ -120,7 +120,7 @@ class NewsRecvEvent(RecvEvent):
 
     @classmethod
     def get_api_type(cls):
-        return 2002
+        return 2012
 
 
 class AdventureRecvEvent(RecvEvent):
