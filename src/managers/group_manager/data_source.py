@@ -150,6 +150,12 @@ async def sign_reset(bot_id: int) -> list[int]:
     return group_list
 
 
+async def get_bot_group_list(bot_id: int) -> list[int]:
+    '''获取机器人开启群组名单'''
+    group_list = await GroupInfo.get_group_list(bot_id)
+    return group_list
+
+
 async def get_welcome_status(bot_id: int, group_id: int) -> Optional[bool]:
     '''获取进群通知开关'''
     return await GroupInfo.get_welcome_status(bot_id, group_id)
@@ -178,6 +184,16 @@ async def get_goodnight_status(bot_id: int, group_id: int) -> Optional[bool]:
 async def set_goodnight_status(bot_id: int, group_id: int, status: bool):
     '''设置晚安通知'''
     await GroupInfo.set_goodnight_status(bot_id, group_id, status)
+
+
+async def get_goodmorning_status(bot_id: int, group_id: int) -> Optional[bool]:
+    '''获取早安通知开关'''
+    return await GroupInfo.get_goodmorning_status(bot_id, group_id)
+
+
+async def set_goodmorning_status(bot_id: int, group_id: int, status: bool):
+    '''设置早安通知'''
+    await GroupInfo.set_goodmorning_status(bot_id, group_id, status)
 
 
 def Message_command_handler(message: Message, command: str) -> Message:
@@ -363,6 +379,35 @@ async def set_goodnight_text(bot_id: int, group_id: int, msg_type: str, message:
     '''
     message_list = await _Message_encoder(bot_id=bot_id, group_id=group_id, msg_type=msg_type, message=message)
     await GroupInfo.set_goodnight_text(bot_id, group_id, message_list)
+
+
+async def get_goodmorning_text(bot_id: int, group_id: int) -> Message:
+    '''
+    : 说明
+        获取晚安语
+
+    : 参数
+        * bot_id：机器人QQ
+        * group_id：QQ群号
+    '''
+    message_list = await GroupInfo.get_goodmorning_text(bot_id, group_id)
+    message = _Message_decoder(message_list)
+    return message
+
+
+async def set_goodmorning_text(bot_id: int, group_id: int, msg_type: str, message: Message):
+    '''
+    :说明
+        设置晚安通知内容
+
+    :参数
+        * bot_id：机器人QQ
+        * group_id：QQ群号
+        * msg_type：消息类型，welcome，someoneleft，goodninght
+        * message：消息内容
+    '''
+    message_list = await _Message_encoder(bot_id=bot_id, group_id=group_id, msg_type=msg_type, message=message)
+    await GroupInfo.set_goodmorning_text(bot_id, group_id, message_list)
 
 
 def handle_didi_message(one_message: MessageSegment) -> MessageSegment:

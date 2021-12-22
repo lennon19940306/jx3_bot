@@ -13,9 +13,11 @@ function handle(data) {
     welcome = get_alert(data['welcome_status'], "进群通知")
     someoneleft = get_alert(data['someone_left_status'], "离群通知")
     goodnight = get_alert(data['goodnight_status'], "晚安通知")
+    goodmorning = get_alert(data['goodmorning_status'], "早安通知")
     col.append(welcome)
     col.append(someoneleft)
     col.append(goodnight)
+    col.append(goodmorning)
 
     plugins = data['plugins']
     var table = $("#table tbody")

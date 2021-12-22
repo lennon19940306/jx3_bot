@@ -23,6 +23,11 @@ robot_goodnight = [{
     "type": "text",
     "data": config.get('robot-goodnight')
 }]
+robot_goodmorning_status: bool = config.get('robot-goodmorning-status')
+robot_goodmorning = [{
+    "type": "text",
+    "data": config.get('robot-goodmorning')
+}]
 
 
 class GroupInfo(Model):
@@ -56,6 +61,10 @@ class GroupInfo(Model):
     '''晚安通知开关'''
     goodnight_text = fields.JSONField(default=robot_goodnight)
     '''晚安通知内容'''
+    goodmorning_status = fields.BooleanField(default=robot_goodmorning_status)
+    '''早安通知开关'''
+    goodmorning_text = fields.JSONField(default=robot_goodmorning)
+    '''早安通知内容'''
 
     class Meta:
         table = "group_info"
@@ -340,6 +349,20 @@ class GroupInfo(Model):
         return None if record is None else record.goodnight_status
 
     @classmethod
+    async def set_goodmorning_status(cls, bot_id: int, group_id: int, goodmorning_status: bool):
+        record = await cls.get_or_none(bot_id=bot_id, group_id=group_id)
+        if record is not None:
+            record.goodmorning_status = goodmorning_status
+            await record.save(update_fields=["goodmorning_status"])
+        else:
+            raise Exception
+
+    @classmethod
+    async def get_goodmorning_status(cls, bot_id: int, group_id: int) -> Optional[bool]:
+        record = await cls.get_or_none(bot_id=bot_id, group_id=group_id)
+        return None if record is None else record.goodmorning_status
+
+    @classmethod
     async def set_goodnight_text(cls, bot_id: int, group_id: int, goodnight_text: list):
         record = await cls.get_or_none(bot_id=bot_id, group_id=group_id)
         if record is not None:
@@ -352,6 +375,20 @@ class GroupInfo(Model):
     async def get_goodnight_text(cls, bot_id: int, group_id: int) -> Optional[list[dict]]:
         record = await cls.get_or_none(bot_id=bot_id, group_id=group_id)
         return None if record is None else record.goodnight_text
+
+    @classmethod
+    async def set_goodmorning_text(cls, bot_id: int, group_id: int, goodmorning_text: list):
+        record = await cls.get_or_none(bot_id=bot_id, group_id=group_id)
+        if record is not None:
+            record.goodmorning_text = goodmorning_text
+            await record.save(update_fields=["goodmorning_text"])
+        else:
+            raise Exception
+
+    @classmethod
+    async def get_goodmorning_text(cls, bot_id: int, group_id: int) -> Optional[list[dict]]:
+        record = await cls.get_or_none(bot_id=bot_id, group_id=group_id)
+        return None if record is None else record.goodmorning_text
 
     @classmethod
     async def get_all_data(cls, bot_id: int) -> list[dict]:

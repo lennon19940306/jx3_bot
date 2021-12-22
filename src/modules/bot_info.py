@@ -6,13 +6,14 @@ from tortoise import fields
 from tortoise.models import Model
 
 defaule_nickname: str = config.get('default').get('nickname')
+defaule_owner: int = config.get('default').get('owner')
 
 
 class BotInfo(Model):
     '''QQ机器人表'''
     bot_id = fields.IntField(pk=True)
     '''机器人QQ号'''
-    owner_id = fields.IntField(null=True)
+    owner_id = fields.IntField(null=True, default=defaule_owner)
     '''管理员账号'''
     nickname = fields.CharField(max_length=255, default=defaule_nickname)
     '''机器人昵称'''

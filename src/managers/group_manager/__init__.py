@@ -22,7 +22,7 @@ export.plugin_name = '群管理'
 export.plugin_command = ""
 export.plugin_usage = '用于操作群相关管理。'
 export.default_status = True  # 插件默认开关
-export.ignore = True  # 插件管理器忽略此插件
+export.ignore = False  # 插件管理器忽略此插件
 
 config = baseconfig.get('default')
 
@@ -55,12 +55,46 @@ async def _():
 
         # 获取owner
         time_end = time.time()
-        time_use = round(time_end-time_start, 2)
+        time_use = round(time_end - time_start, 2)
         owner_id = await source.get_bot_owner(bot_id)
         if owner_id is not None:
             msg = f"发送晚安完毕，共发送 {count_all} 个群\n发送成功 {count_success} 个\n发送失败 {count_failed} 个\n关闭通知 {count_closed}个\n用时 {time_use} 秒"
             await bot.send_private_msg(user_id=owner_id, message=msg)
 
+
+# 发送早安消息
+@scheduler.scheduled_job("cron", hour=8, minute=30)
+async def _():
+    bot_id_list = get_bots()
+    for bot_id, bot in bot_id_list.items():
+        group_list = await source.get_bot_group_list(int(bot_id))
+        count_success = 0
+        count_failed = 0
+        count_closed = 0
+        count_all = len(group_list)
+        time_start = time.time()
+        for group_id in group_list:
+            goodmorning_status = await source.get_goodmorning_status(int(bot_id), group_id)
+            if goodmorning_status:
+                try:
+                    msg = await source.get_goodmorning_text(bot_id, group_id)
+                    await bot.send_group_msg(group_id=group_id, message=msg)
+                    await asyncio.sleep(random.uniform(0.3, 0.5))
+                    count_success += 1
+                except Exception:
+                    log = f'Bot({bot.self_id}) | （{group_id}）群被禁言了，无法发送晚安……'
+                    logger.warning(log)
+                    count_failed += 1
+            else:
+                count_closed += 1
+
+        # 获取owner
+        time_end = time.time()
+        time_use = round(time_end - time_start, 2)
+        owner_id = await source.get_bot_owner(bot_id)
+        if owner_id is not None:
+            msg = f"发送早安完毕，共发送 {count_all} 个群\n发送成功 {count_success} 个\n发送失败 {count_failed} 个\n关闭通知 {count_closed}个\n用时 {time_use} 秒"
+            await bot.send_private_msg(user_id=owner_id, message=msg)
 
 # 绑定服务器
 server_regex = r"^绑定 [\u4e00-\u9fa5]+$"
@@ -106,6 +140,15 @@ goodnight_status = on_regex(pattern=goodnight_status_regex,
                             block=True)
 # 更改晚安通知内容
 goodnight_text = on_regex(pattern="^晚安通知 ", permission=OWNER | GROUP_OWNER | GROUP_ADMIN, priority=2, block=True)
+
+# 打开关闭早安通知
+goodmorning_status_regex = r"^((打开)|(关闭)) 早安通知$"
+goodmorning_status = on_regex(pattern=goodmorning_status_regex,
+                              permission=OWNER | GROUP_OWNER | GROUP_ADMIN,
+                              priority=2,
+                              block=True)
+# 更改早安通知内容
+goodmorning_text = on_regex(pattern="^早安通知 ", permission=OWNER | GROUP_OWNER | GROUP_ADMIN, priority=2, block=True)
 
 
 @server_change.handle()
@@ -339,6 +382,18 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await someoneleft_status.finish(msg)
 
 
+@goodmorning_status.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    '''打开关闭早安通知'''
+    bot_id = int(bot.self_id)
+    group_id = event.group_id
+    text = event.get_plaintext()
+    status = (text == "打开 早安通知")
+    await source.set_goodmorning_status(bot_id, group_id, status)
+    msg = "早安通知已开启。" if status else "早安通知已关闭。"
+    await someoneleft_status.finish(msg)
+
+
 @welcome_text.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     '''修改进群通知内容'''
@@ -383,5 +438,21 @@ async def _(bot: Bot, event: GroupMessageEvent):
     message = source.Message_command_handler(message=message, command=command)
     await source.set_goodnight_text(bot_id, group_id, msg_type, message)
     msg = "已设置晚安通知内容。"
+
+    await welcome_text.finish(msg)
+
+
+@goodmorning_text.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    '''修改早安通知'''
+    bot_id = int(bot.self_id)
+    group_id = event.group_id
+    message = event.get_message()
+
+    command = "早安通知"
+    msg_type = "goodmorning"
+    message = source.Message_command_handler(message=message, command=command)
+    await source.set_goodmorning_text(bot_id, group_id, msg_type, message)
+    msg = "已设置早安通知内容。"
 
     await welcome_text.finish(msg)

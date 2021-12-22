@@ -134,6 +134,7 @@ async def get_meau_data(self_id: int, group_id: int, nickname: str) -> dict:
     alldata['welcome_status'] = await GroupInfo.get_welcome_status(self_id, group_id)
     alldata['someone_left_status'] = await GroupInfo.get_someoneleft_status(self_id, group_id)
     alldata['goodnight_status'] = await GroupInfo.get_goodnight_status(self_id, group_id)
+    alldata['goodmorning_status'] = await GroupInfo.get_goodmorning_status(self_id, group_id)
 
     server = await GroupInfo.get_server(self_id, group_id)
     alldata['server'] = server

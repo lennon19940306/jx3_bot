@@ -3,18 +3,18 @@
 # 自动聊天插件配置
 chat_nlp:
   # 腾讯云API的secretId，开通地址：https://console.cloud.tencent.com/cam/capi
-  secretId: ~
+  secretId: AKIDOcaHi49xVlkSt3wZvlRwA7mBKBm68tNb
   # 腾讯云API的secretKey，NLP申请：https://console.cloud.tencent.com/nlp
-  secretKey: ~
+  secretKey: yf6GAn9E2ZpoWx6yZuymKcdNq1vYtxkG
 
 # 自动插话-语音合成配置
 chat_voice:
   # 阿里云的语音接口，开通地址：https://usercenter.console.aliyun.com/
-  appkey: ~
+  appkey: Wd05LGx2bU8CU6ty
   # 阿里云的语音接口，NLP申请：https://nls-portal.console.aliyun.com/overview
-  access: ~
+  access: LTAI5tB2Jd3cbUA2rFMfp8oZ
   # 阿里云的语音接口
-  secret: ~
+  secret: hcjcnpcLhJNOnTmImEGCOKZbpsqrXA
   # 发言人，文档：https://help.aliyun.com/knowledge_detail/84435.html?spm=a2c4g.11186631.2.1.67045663WlpL4n
   voice: Aitong
   # 编码格式，支持 PCM WAV MP3
@@ -33,14 +33,14 @@ jx3-api:
   # ws链接地址
   ws-path: wss://socket.nicemoe.cn
   # 主站地址
-  jx3-url:  https://www.jx3api.com
+  jx3-url: https://www.jx3api.com
   # 主站token，不填将不能访问带ticket的接口
   jx3-token: ~
 
 # 天气插件设置
 weather:
   # 和风天气api-key
-  api-key: ~
+  api-key: aa1de1b028bd454fae979fe0bf5afd13
   # 天气api地址
   url-weather: https://devapi.qweather.com/v7/weather/
   # 城市api地址
@@ -64,8 +64,10 @@ yiqing:
 
 # 默认设置
 default:
+  #默认超级管理员
+  owner: 1136160757
   # 默认昵称
-  nickname: 团子
+  nickname: 罐仔仔
   # ws链接最大重连次数
   max-recon-times: 100
   # 插件debug日志是否显示在控制台
@@ -92,6 +94,10 @@ default:
   robot-goodnight-status: true
   # 默认晚安说辞
   robot-goodnight: 我要去睡觉了，大家晚安……
+  # 群默认早安开关
+  robot-goodmorning-status: false
+  # 默认早安说辞
+  robot-goodmorning: 懒猪起床了，让我来看看哪个懒猪还在睡觉！
   # 是否开启智能私聊，开启后私聊机器人会获得回复
   private-chat: true
   # 离线bot数据清理时间，单位：小时
