@@ -379,7 +379,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     status = (text == "打开 晚安通知")
     await source.set_goodnight_status(bot_id, group_id, status)
     msg = "晚安通知已开启。" if status else "晚安通知已关闭。"
-    await someoneleft_status.finish(msg)
+    await goodnight_status.finish(msg)
 
 
 @goodmorning_status.handle()
@@ -391,7 +391,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     status = (text == "打开 早安通知")
     await source.set_goodmorning_status(bot_id, group_id, status)
     msg = "早安通知已开启。" if status else "早安通知已关闭。"
-    await someoneleft_status.finish(msg)
+    await goodmorning_status.finish(msg)
 
 
 @welcome_text.handle()
@@ -423,7 +423,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await source.set_someoneleft_text(bot_id, group_id, msg_type, message)
     msg = "已设置离群通知内容。"
 
-    await welcome_text.finish(msg)
+    await someoneleft_text.finish(msg)
 
 
 @goodnight_text.handle()
@@ -439,7 +439,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await source.set_goodnight_text(bot_id, group_id, msg_type, message)
     msg = "已设置晚安通知内容。"
 
-    await welcome_text.finish(msg)
+    await goodnight_text.finish(msg)
 
 
 @goodmorning_text.handle()
@@ -455,4 +455,4 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await source.set_goodmorning_text(bot_id, group_id, msg_type, message)
     msg = "已设置早安通知内容。"
 
-    await welcome_text.finish(msg)
+    await goodmorning_text.finish(msg)

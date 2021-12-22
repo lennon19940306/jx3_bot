@@ -93,7 +93,8 @@ owner_help = on_regex(pattern=r"^帮助$", permission=OWNER, priority=2, block=T
 # 管理员广播
 borodcast_all = on_regex(pattern=r"^全体广播 ", permission=OWNER, priority=2, block=True)
 borodcast = on_regex(pattern=r"^广播 [0-9]+ ", permission=OWNER, priority=2, block=True)
-
+# 发送消息
+ownersend = on_regex(pattern=r"^发送 [0-9]+ ", permission=OWNER, priority=2, block=True)
 # 设置昵称
 set_nickname = on_regex(pattern=r"^设置昵称 [\u4E00-\u9FA5A-Za-z0-9_]+$", permission=OWNER, priority=2, block=True)
 
@@ -364,6 +365,29 @@ async def _(bot: Bot, event: PrivateMessageEvent):
         msg = f"广播失败至群[{str(group_id)}]失败，可能被禁言。"
     await borodcast.finish(msg)
 
+
+@ownersend.handle()
+async def _(bot: Bot, event: PrivateMessageEvent):
+    '''
+    发送消息到某个群
+    '''
+    bot_id = int(bot.self_id)
+    get_msg = event.get_message()
+    get_msg[0], group_id = source.handle_borad_message(all=False, one_message=get_msg[0])
+
+    robot_status = await source.get_robot_status(bot_id, group_id)
+    if robot_status is None:
+        msg = f"发送失败，未找到群[{str(group_id)}]。"
+        await ownersend.finish(msg)
+    elif robot_status is False:
+        msg = f"发送失败，机器人在群[{str(group_id)}]处于关闭。"
+        await ownersend.finish(msg)
+    try:
+        await bot.send_group_msg(group_id=group_id, message=get_msg)
+        msg = f"发送已发送至群[{str(group_id)}]。"
+    except Exception:
+        msg = f"发送失败至群[{str(group_id)}]失败，可能被禁言。"
+    await ownersend.finish(msg)
 
 @set_nickname.handle()
 async def _(bot: Bot, event: PrivateMessageEvent):
