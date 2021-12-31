@@ -59,10 +59,16 @@ async def get_html_screenshots(pagename: str, data: dict = None) -> str:
     global browser
     if browser is None:
         await browser_init()
+    if not browser:
+            await browser_init()
+    if playwright is None:
+        await browser_init()
+    if not playwright:
+        await browser_init()
 
     page = await browser.new_page()
     html_path: str = config.get('path').get('html')
-    url = "file://"+os.getcwd()+html_path+pagename
+    url = "file://" + os.getcwd() + html_path + pagename
 
     # 打开页面
     await page.goto(url)
@@ -78,8 +84,9 @@ async def get_html_screenshots(pagename: str, data: dict = None) -> str:
     element_handle = await page.query_selector("#main")
     screenshot_bytes = await element_handle.screenshot(type="jpeg", quality=100)
     base64_str = base64.b64encode(screenshot_bytes)
-    req_str = 'base64://'+base64_str.decode()
+    req_str = 'base64://' + base64_str.decode()
     await page.close()
+    await close_browser()
     return req_str
 
 
@@ -98,6 +105,12 @@ async def get_web_screenshot(url: str, width: int) -> str:
     global browser
     if browser is None:
         await browser_init()
+    if not browser:
+        await browser_init()
+    if playwright is None:
+        await browser_init()
+    if not playwright:
+        await browser_init()
 
     page = await browser.new_page()
     # 打开页面
@@ -109,6 +122,7 @@ async def get_web_screenshot(url: str, width: int) -> str:
     await page.wait_for_load_state("networkidle")
     screenshot_bytes = await page.screenshot(type="jpeg", quality=100, full_page=True)
     base64_str = base64.b64encode(screenshot_bytes)
-    req_str = 'base64://'+base64_str.decode()
+    req_str = 'base64://' + base64_str.decode()
     await page.close()
+    await close_browser()
     return req_str
