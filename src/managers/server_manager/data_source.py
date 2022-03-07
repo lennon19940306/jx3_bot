@@ -68,6 +68,7 @@ async def _task():
             data = json.loads(data_recv)
             msg_type: int = data['type']
             event = None
+            logger.info(f'jx3_api > [{data}]')
             for event_type in Jx3EventList:
                 if msg_type == event_type.get_api_type():
                     event = event_type(data)

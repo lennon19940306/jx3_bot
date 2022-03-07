@@ -20,9 +20,9 @@ function handle(data) {
 }
 
 function get_string(data) {
-    var one_string = "<tr><td class='text-center text-warning'>" + data['time'] + '</td>'
+    var one_string = "<tr><td class='text-center text-warning'>" + data['date'] + '</td>'
     one_string += "<td class='text-center'>" + data['server'] + "</td>"
-    one_string += "<td class='text-center text-primary'>￥" + data['price'] + "</td>"
-    one_string += "<td class='text-center'>" + data['sales'] + "</td></tr>"
+    one_string += "<td class='text-center text-primary'>￥" + data['value'] + "</td>"
+    one_string += "<td class='text-center'>" + data['sale'] + "</td></tr>"
     return one_string
 }

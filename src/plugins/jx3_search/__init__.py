@@ -18,7 +18,6 @@ export.plugin_usage = '提供各种剑网三的查询功能。'
 export.default_status = True  # 插件默认开关
 export.ignore = False  # 插件管理器忽略此插件
 
-
 # 日常查询
 daily = on_regex(pattern=r"(^日常$)|(^日常 [\u4e00-\u9fa5]+$)", permission=GROUP, priority=5, block=True)
 
@@ -72,8 +71,9 @@ update_query = on_regex(pattern=update_regex, permission=GROUP, priority=5, bloc
 price_query = on_regex(pattern=r"^物价 [\u4e00-\u9fa5]+$", permission=GROUP, priority=5, block=True)
 
 # 奇遇查询
-serendipity = on_regex(pattern=r"(^奇遇 [(\u4e00-\u9fa5)|(1-9)|(@)]+$)|(^奇遇 [\u4e00-\u9fa5]+ [(\u4e00-\u9fa5)|(1-9)|(@)]+$)",
-                       permission=GROUP, priority=5, block=True)
+serendipity = on_regex(
+    pattern=r"(^奇遇 [(\u4e00-\u9fa5)|(1-9)|(@)]+$)|(^奇遇 [\u4e00-\u9fa5]+ [(\u4e00-\u9fa5)|(1-9)|(@)]+$)",
+    permission=GROUP, priority=5, block=True)
 
 # 奇遇列表
 serendipityList = on_regex(pattern=r"(^查询 [\u4e00-\u9fa5]+$)|(^查询 [\u4e00-\u9fa5]+ [\u4e00-\u9fa5]+$)",
@@ -100,7 +100,6 @@ awesome_query = on_regex(pattern=awesome_query_regex, permission=GROUP, priority
 # 团本记录查询
 teamcdlist_regex = r"(^副本记录 [(\u4e00-\u9fa5)|(1-9)|(@)]+$)|(^副本记录 [\u4e00-\u9fa5]+ [(\u4e00-\u9fa5)|(1-9)|(@)]+$)"
 teamcdlist = on_regex(pattern=teamcdlist_regex, permission=GROUP, priority=5, block=True)
-
 
 # 沙盘查询
 sand_query_regex = r"(^沙盘$)|(^沙盘 [\u4e00-\u9fa5]+$)"
@@ -144,16 +143,18 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
     msg = f'日常[{server}]\n'
     msg += f'当前时间：{data.get("date")} 星期{data.get("week")}\n'
-    msg += f'今日大战：{data.get("dayWar")}\n'
-    msg += f'今日战场：{data.get("dayBattle")}\n'
-    msg += f'公共任务：{data.get("dayPublic")}\n'
-    msg += f'阵营任务：{data.get("dayCamp")}\n'
+    msg += f'今日大战：{data.get("war")}\n'
+    msg += f'今日战场：{data.get("battle")}\n'
+    msg += f'公共任务：{data.get("public")}\n'
+    msg += f'阵营任务：{data.get("camp")}\n'
     msg += source.get_daily_week(data.get("week"))
-    if data.get("dayDraw") is not None:
-        msg += f'美人画像：{data.get("dayDraw")}\n'
-    msg += f'\n武林通鉴·公共任务\n{data.get("weekPublic")}\n'
-    msg += f'武林通鉴·秘境任务\n{data.get("weekFive")}\n'
-    msg += f'武林通鉴·团队秘境\n{data.get("weekTeam")}'
+    if data.get("draw") is not None:
+        msg += f'美人画像：{data.get("draw")}\n'
+    if data.get("team")[0] is not None:
+        msg += f'\n武林通鉴·公共任务\n{data.get("team")[0]}\n'
+    if data.get("team")[1] is not None:
+        msg += f'武林通鉴·秘境任务\n{data.get("team")[1]}\n'
+    msg += f'武林通鉴·团队秘境\n{data.get("team")[2]}'
     await daily.finish(msg)
 
 
@@ -317,7 +318,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     # 查询成功
     await source.use_one_app(bot_id, group_id, app_name)
 
-    img = data.get('all')
+    img = data.get('master')
     msg = MessageSegment.image(img)
     await extra_point.finish(msg)
 
@@ -447,7 +448,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await exam.finish(msg)
 
     params = {
-        "question":  question
+        "question": question
     }
     req_msg, data = await source.get_data_from_jx3api(url=url, params=params)
     if req_msg != 'success':
@@ -492,8 +493,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     # 查询成功
     await source.use_one_app(bot_id, group_id, app_name)
 
-    msg = MessageSegment.text(f'{data.get("name")}配装：\nPve装备：\n')+MessageSegment.image(data.get("pve")) + \
-        MessageSegment.text("Pvp装备：\n")+MessageSegment.image(data.get("pvp"))
+    msg = MessageSegment.text(f'{data.get("name")}配装：\nPve装备：\n') + MessageSegment.image(data.get("pve")) + \
+          MessageSegment.text("Pvp装备：\n") + MessageSegment.image(data.get("pvp"))
     await equip_group_query.finish(msg)
 
 
@@ -899,7 +900,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await source.use_one_app(bot_id, group_id, app_name)
 
     data = {}
-    data['name'] = req_data['server']+"-"+req_data['name']
+    data['name'] = req_data['server'] + "-" + req_data['name']
     data['role_performance'] = req_data.get('performance')
     data['history'] = source.indicator_query_hanlde(req_data.get('history'))
     pagename = "indicator.html"
