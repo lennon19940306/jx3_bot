@@ -81,7 +81,7 @@ class OpenServerRecvEvent(RecvEvent):
 
     @classmethod
     def get_api_type(cls):
-        return 2011
+        return 2001
 
 
 class NewsRecvEvent(RecvEvent):
@@ -120,7 +120,7 @@ class NewsRecvEvent(RecvEvent):
 
     @classmethod
     def get_api_type(cls):
-        return 2012
+        return 2002
 
 
 class AdventureRecvEvent(RecvEvent):
@@ -161,7 +161,7 @@ class AdventureRecvEvent(RecvEvent):
 
     @classmethod
     def get_api_type(cls):
-        return 2003
+        return 1001
 
 
 Jx3EventType = Union[

@@ -106,9 +106,9 @@ def _get_recv_log(data: dict) -> str:
         log = f"开服推送事件：[{server}]状态-{status}"
     elif recv_type == 2002:
         news_type = recv_data.get('type')
-        news_tittle = recv_data.get('tittle')
+        news_tittle = recv_data.get('title')
         log = f"[{news_type}]事件：{news_tittle}"
-    elif recv_type == 2003:
+    elif recv_type == 1001:
         server = recv_data.get('server')
         name = recv_data.get('name')
         serendipity = recv_data.get('serendipity')
