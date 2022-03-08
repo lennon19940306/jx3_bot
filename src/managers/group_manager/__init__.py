@@ -42,7 +42,7 @@ async def _():
             goodnight_status = await source.get_goodnight_status(int(bot_id), group_id)
             if goodnight_status:
                 try:
-                    msg = await source.get_goodnight_text(bot_id, group_id)
+                    msg = await source.get_goodnight_text(int(bot_id), group_id)
                     await bot.send_group_msg(group_id=group_id, message=msg)
                     await asyncio.sleep(random.uniform(0.3, 0.5))
                     count_success += 1
@@ -56,7 +56,7 @@ async def _():
         # 获取owner
         time_end = time.time()
         time_use = round(time_end - time_start, 2)
-        owner_id = await source.get_bot_owner(bot_id)
+        owner_id = await source.get_bot_owner(int(bot_id))
         if owner_id is not None:
             msg = f"发送晚安完毕，共发送 {count_all} 个群\n发送成功 {count_success} 个\n发送失败 {count_failed} 个\n关闭通知 {count_closed}个\n用时 {time_use} 秒"
             await bot.send_private_msg(user_id=owner_id, message=msg)
@@ -78,8 +78,8 @@ async def _():
             goodmorning_status = await source.get_goodmorning_status(int(bot_id), group_id)
             if goodmorning_status:
                 try:
-                    msg = await source.get_goodmorning_text(bot_id, group_id)
-                    dailyMsg = await daily(bot_id, group_id, bot.self_id)
+                    msg = await source.get_goodmorning_text(int(bot_id), group_id)
+                    dailyMsg = await daily(int(bot_id), group_id, bot.self_id)
                     if dailyMsg is not None:
                         msg += "\n\n"
                         msg += dailyMsg
@@ -98,7 +98,7 @@ async def _():
         # 获取owner
         time_end = time.time()
         time_use = round(time_end - time_start, 2)
-        owner_id = await source.get_bot_owner(bot_id)
+        owner_id = await source.get_bot_owner(int(bot_id))
         if owner_id is not None:
             msg = f"发送早安完毕，共发送 {count_all} 个群\n发送成功 {count_success} 个\n发送失败 {count_failed} 个\n关闭通知 {count_closed}个\n" \
                   f"日常查询失败 {daily_fail} 个\n用时 {time_use} 秒 "
