@@ -71,6 +71,7 @@ async def _():
         count_success = 0
         count_failed = 0
         count_closed = 0
+        daily_fail = 0
         count_all = len(group_list)
         time_start = time.time()
         for group_id in group_list:
@@ -78,11 +79,17 @@ async def _():
             if goodmorning_status:
                 try:
                     msg = await source.get_goodmorning_text(bot_id, group_id)
+                    dailyMsg = await daily(bot_id, group_id, bot.self_id)
+                    if dailyMsg is not None:
+                        msg += "\n\n"
+                        msg += dailyMsg
+                    else:
+                        daily_fail += 1
                     await bot.send_group_msg(group_id=group_id, message=msg)
                     await asyncio.sleep(random.uniform(0.3, 0.5))
                     count_success += 1
                 except Exception:
-                    log = f'Bot({bot.self_id}) | （{group_id}）群被禁言了，无法发送晚安……'
+                    log = f'Bot({bot.self_id}) | （{group_id}）群被禁言了，无法发送早安……'
                     logger.warning(log)
                     count_failed += 1
             else:
@@ -93,8 +100,45 @@ async def _():
         time_use = round(time_end - time_start, 2)
         owner_id = await source.get_bot_owner(bot_id)
         if owner_id is not None:
-            msg = f"发送早安完毕，共发送 {count_all} 个群\n发送成功 {count_success} 个\n发送失败 {count_failed} 个\n关闭通知 {count_closed}个\n用时 {time_use} 秒"
+            msg = f"发送早安完毕，共发送 {count_all} 个群\n发送成功 {count_success} 个\n发送失败 {count_failed} 个\n关闭通知 {count_closed}个\n" \
+                  f"日常查询失败 {daily_fail} 个\n用时 {time_use} 秒 "
             await bot.send_private_msg(user_id=owner_id, message=msg)
+
+
+async def daily(bot_id: int, group_id: int, self_id: str):
+    server = await source.get_server(bot_id, group_id)
+    log = f"Bot({self_id}) | 群[{group_id}]查询日常：server：{server}"
+    logger.info(log)
+
+    app_name = "日常查询"
+    url, cd_time = await source.get_jx3_url(app_name)
+
+    params = {
+        "server": server,
+    }
+    req_msg, data = await source.get_data_from_jx3api(url, params)
+    if req_msg != 'success':
+        msg = f"查询失败，{req_msg}。"
+        logger.info(msg)
+        return None
+
+    # 查询成功
+    await source.use_one_app(bot_id, group_id, app_name)
+
+    msg = f'日常\n[{server}]\n'
+    msg += f'当前时间：{data.get("date")} 星期{data.get("week")}\n'
+    msg += f'今日大战：{data.get("war")}\n'
+    msg += f'今日战场：{data.get("battle")}\n'
+    msg += f'公共任务：{data.get("public")}\n'
+    msg += f'阵营任务：{data.get("camp")}\n'
+    msg += source.get_daily_week(data.get("week"))
+    if data.get("draw") is not None:
+        msg += f'美人画像：{data.get("draw")}\n'
+    msg += f'\n武林通鉴·公共任务\n{data.get("team")[0]}\n'
+    msg += f'武林通鉴·秘境任务\n{data.get("team")[1]}\n'
+    msg += f'武林通鉴·团队秘境\n{data.get("team")[2]}'
+    return msg
+
 
 # 绑定服务器
 server_regex = r"^绑定 [\u4e00-\u9fa5]+$"

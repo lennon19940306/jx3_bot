@@ -1,5 +1,6 @@
 import os
-from typing import Optional
+from typing import Optional, Tuple
+from .config import daily_list, jx3_app, zhiye_name
 
 import httpx
 from nonebot.adapters.cqhttp import Bot, Event
@@ -12,7 +13,18 @@ from src.modules.plugin_info import PluginInfo
 from src.modules.user_info import UserInfo
 from src.utils.config import config
 from src.utils.user_agent import get_user_agent
+from src.modules.search_record import SearchRecord
 
+apiconfig = config.get('jx3-api')
+'''jx3-api的配置'''
+
+_jx3_token = apiconfig.get('jx3-token')
+if _jx3_token is None:
+    _jx3_token = ""
+
+_jx3_headers = {"token": _jx3_token, "User-Agent": "Nonebot2-jx3_bot"}
+
+jx3_client = httpx.AsyncClient(headers=_jx3_headers)
 
 async def group_init(bot_id: int, group_id: int, group_name: str) -> None:
     '''
@@ -416,3 +428,68 @@ def handle_didi_message(one_message: MessageSegment) -> MessageSegment:
     req_text = text[3:]
     req_msg = MessageSegment.text(req_text)
     return req_msg
+
+
+async def get_server(bot_id: int, group_id: int) -> Optional[str]:
+    '''
+    获取绑定服务器名称
+    '''
+    return await GroupInfo.get_server(bot_id, group_id)
+
+
+async def get_jx3_url(app: str) -> Tuple[str, int]:
+    '''
+    :说明
+        获取访问api的url，如果未配置高级站点地址，则默认采用普通站访问
+
+    :参数
+        * app：应用名称
+
+    :返回
+        * str：url地址
+        * int：cd时间，秒
+    '''
+    jx3_url: str = apiconfig.get('jx3-url')
+    get_app: dict = jx3_app.get(app)
+    if get_app:
+        url = jx3_url+get_app['app']
+        cd_time = get_app['cd']
+        return url, cd_time
+
+    return "", 0
+
+
+async def get_data_from_jx3api(url: str, params: dict) -> Tuple[str, Optional[dict]]:
+    '''
+    :说明
+        发送一条请求给jx3-api，返回结果
+
+    :参数
+        * url：url地址
+        * params：请求参数
+
+    :返回
+        * msg：返回msg，为'success'时成功
+        * data：返回数据
+    '''
+    try:
+        req_url = await jx3_client.get(url, params=params)
+        req = req_url.json()
+        msg = req['msg']
+        data = req['data']
+        return msg, data
+    except Exception as e:
+        return str(e), None
+
+
+async def use_one_app(bot_id: int, group_id: int, app_name: str):
+    '''记录使用一次查询'''
+    await SearchRecord.count_search(bot_id, group_id, app_name)
+
+
+def get_daily_week(week: str) -> str:
+    '''
+    根据星期几返回额外的日常结果
+    '''
+    return daily_list.get(week)
+
