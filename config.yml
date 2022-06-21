@@ -3,18 +3,18 @@
 # 自动聊天插件配置
 chat_nlp:
   # 腾讯云API的secretId，开通地址：https://console.cloud.tencent.com/cam/capi
-  secretId: ~
+  secretId: AKIDBAuNZU9WcR0tVquhDCxTigNoyrTqxoOg
   # 腾讯云API的secretKey，NLP申请：https://console.cloud.tencent.com/nlp
-  secretKey: ~
+  secretKey: 4rNbaIjtmPlqeCUVFjwrVszpOghRu75i
 
 # 自动插话-语音合成配置
 chat_voice:
   # 阿里云的语音接口，开通地址：https://usercenter.console.aliyun.com/
-  appkey: ~
+  appkey: zlS3Ac1X9IBHONX2
   # 阿里云的语音接口，NLP申请：https://nls-portal.console.aliyun.com/overview
-  access: ~
+  access: LTAI5tN2jQqPP1rQk5XJP4ry
   # 阿里云的语音接口
-  secret: ~
+  secret: 0752MXzhrVYaNqL0wQpTm1ncKdcEvK
   # 发言人，文档：https://help.aliyun.com/knowledge_detail/84435.html?spm=a2c4g.11186631.2.1.67045663WlpL4n
   voice: Aitong
   # 编码格式，支持 PCM WAV MP3
@@ -40,7 +40,7 @@ jx3-api:
 # 天气插件设置
 weather:
   # 和风天气api-key
-  api-key: ~
+  api-key: 9e10dea6790546959aa1545fa2f309f2
   # 天气api地址
   url-weather: https://devapi.qweather.com/v7/weather/
   # 城市api地址
@@ -65,7 +65,7 @@ yiqing:
 # 默认设置
 default:
   #默认超级管理员
-  owner: ~
+  owner: 1136160757
   # 默认昵称
   nickname: 罐仔仔
   # ws链接最大重连次数

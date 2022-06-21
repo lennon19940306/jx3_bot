@@ -186,7 +186,7 @@ jx3_app = {
         "app": "/movie/matchId",
         "cd": 0
     },
-    "奇遇查询":  {
+    "奇遇查询": {
         "app": "/advent/result",
         "cd": 10
     },
@@ -228,6 +228,10 @@ jx3_app = {
     },
     "名剑统计": {
         "app": "/arena/schools",
+        "cd": 10
+    },
+    "舔狗日志": {
+        "app": "/transmit/random",
         "cd": 10
     }
 }

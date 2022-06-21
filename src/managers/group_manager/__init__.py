@@ -71,7 +71,6 @@ async def _():
         count_success = 0
         count_failed = 0
         count_closed = 0
-        daily_fail = 0
         count_all = len(group_list)
         time_start = time.time()
         for group_id in group_list:
@@ -79,12 +78,6 @@ async def _():
             if goodmorning_status:
                 try:
                     msg = await source.get_goodmorning_text(int(bot_id), group_id)
-                    dailyMsg = await daily(int(bot_id), group_id, bot.self_id)
-                    if dailyMsg is not None:
-                        msg += "\n\n"
-                        msg += dailyMsg
-                    else:
-                        daily_fail += 1
                     await bot.send_group_msg(group_id=group_id, message=msg)
                     await asyncio.sleep(random.uniform(0.3, 0.5))
                     count_success += 1
@@ -100,8 +93,7 @@ async def _():
         time_use = round(time_end - time_start, 2)
         owner_id = await source.get_bot_owner(int(bot_id))
         if owner_id is not None:
-            msg = f"发送早安完毕，共发送 {count_all} 个群\n发送成功 {count_success} 个\n发送失败 {count_failed} 个\n关闭通知 {count_closed}个\n" \
-                  f"日常查询失败 {daily_fail} 个\n用时 {time_use} 秒 "
+            msg = f"发送早安完毕，共发送 {count_all} 个群\n发送成功 {count_success} 个\n发送失败 {count_failed} 个\n关闭通知 {count_closed}个\n用时 {time_use} 秒 "
             await bot.send_private_msg(user_id=owner_id, message=msg)
 
 
@@ -129,7 +121,8 @@ async def daily(bot_id: int, group_id: int, self_id: str):
     msg += f'当前时间：{data.get("date")} 星期{data.get("week")}\n'
     msg += f'今日大战：{data.get("war")}\n'
     msg += f'今日战场：{data.get("battle")}\n'
-    msg += f'公共任务：{data.get("public")}\n'
+    if data.get("public") is not None:
+        msg += f'公共任务：{data.get("public")}\n'
     msg += f'阵营任务：{data.get("camp")}\n'
     msg += source.get_daily_week(data.get("week"))
     if data.get("draw") is not None:

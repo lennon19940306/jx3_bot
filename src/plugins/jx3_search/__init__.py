@@ -145,7 +145,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg += f'当前时间：{data.get("date")} 星期{data.get("week")}\n'
     msg += f'今日大战：{data.get("war")}\n'
     msg += f'今日战场：{data.get("battle")}\n'
-    msg += f'公共任务：{data.get("public")}\n'
+    if data.get("public") is not None:
+        msg += f'公共任务：{data.get("public")}\n'
     msg += f'阵营任务：{data.get("camp")}\n'
     msg += source.get_daily_week(data.get("week"))
     if data.get("draw") is not None:

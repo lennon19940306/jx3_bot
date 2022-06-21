@@ -38,7 +38,7 @@ async def get_jx3_url(app: str) -> Tuple[str, int]:
     jx3_url: str = config.get('jx3-url')
     get_app: dict = jx3_app.get(app)
     if get_app:
-        url = jx3_url+get_app['app']
+        url = jx3_url + get_app['app']
         cd_time = get_app['cd']
         return url, cd_time
 
@@ -63,11 +63,11 @@ async def check_cd_time(bot_id: int, group_id: int, app_name: str, cd_time: int)
     await SearchRecord.append_or_update(bot_id, group_id, app_name)
     time_last = await SearchRecord.get_last_time(bot_id, group_id, app_name)
     time_now = int(time.time())
-    over_time = time_now-time_last
+    over_time = time_now - time_last
     if over_time > cd_time:
         return True, 0
     else:
-        left_cd = cd_time-over_time
+        left_cd = cd_time - over_time
         return False, left_cd
 
 
@@ -110,7 +110,7 @@ async def get_master_server(server: str) -> Optional[str]:
     '''
     获取主服务器名称
     '''
-    url = config.get('jx3-url')+jx3_app.get('server').get('app')
+    url = config.get('jx3-url') + jx3_app.get('server').get('app')
     params = {
         "name": server
     }
@@ -310,7 +310,7 @@ def indicator_query_hanlde(data: list[dict]) -> list[dict]:
         one_req_data['result'] = one_data.get('won')
         mmr = one_data.get('mmr')
         if mmr > 0:
-            mmr_str = "+"+str(mmr)
+            mmr_str = "+" + str(mmr)
         else:
             mmr_str = str(mmr)
         one_req_data['source'] = str(one_data.get('totalMmr'))
@@ -318,32 +318,32 @@ def indicator_query_hanlde(data: list[dict]) -> list[dict]:
 
         start_time = one_data.get('startTime')
         end_time = one_data.get('endTime')
-        time_keep = end_time-start_time
-        pvp_time = int((time_keep+30)/60)
+        time_keep = end_time - start_time
+        pvp_time = int((time_keep + 30) / 60)
         if pvp_time == 0:
             pvp_time = 1
-        one_req_data['pvp_time'] = str(pvp_time)+" 分钟"
+        one_req_data['pvp_time'] = str(pvp_time) + " 分钟"
 
         time_now = time.time()
-        time_ago = time_now-end_time
+        time_ago = time_now - end_time
         if time_ago < 3600:
             # 一小时内用分钟表示
-            time_end = int((time_ago+30)/60)
+            time_end = int((time_ago + 30) / 60)
             if time_end == 0:
                 time_end = 1
-            one_req_data['end_time'] = str(time_end)+" 分钟"
+            one_req_data['end_time'] = str(time_end) + " 分钟"
         elif time_ago < 86400:
             # 一天内用小时表示
-            time_end = int((time_ago+1800)/3600)
+            time_end = int((time_ago + 1800) / 3600)
             if time_end == 0:
                 time_end = 1
-            one_req_data['end_time'] = str(time_end)+" 小时"
+            one_req_data['end_time'] = str(time_end) + " 小时"
         elif time_ago < 864000:
             # 10天内用天表示
-            time_end = int((time_ago+43200)/86400)
+            time_end = int((time_ago + 43200) / 86400)
             if time_end == 0:
                 time_end = 1
-            one_req_data['end_time'] = str(time_end)+" 天"
+            one_req_data['end_time'] = str(time_end) + " 天"
         else:
             # 超过10天用日期表示
             timeArray = time.localtime(end_time)
@@ -356,7 +356,7 @@ def indicator_query_hanlde(data: list[dict]) -> list[dict]:
 
 async def _check_token(ticket: str) -> str:
     '''检测token是否有效，返回msg值'''
-    url = config.get('jx3-url')+'/token/validity'
+    url = config.get('jx3-url') + '/token/validity'
     params = {
         'ticket': ticket
     }
@@ -376,5 +376,5 @@ async def get_token(bot_id: int) -> Tuple[str, str]:
         # 验证token
         msg = await _check_token(one_token)
         return msg, one_token
-
-    return "没有找到合适的ticket", ""
+    # 没有找到合适的ticket
+    return "暂不支持该查询", ""
