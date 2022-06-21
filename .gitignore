@@ -149,3 +149,4 @@ pyproject.toml
 .env.dev
 data/*
 *.bat
+/secret.yml
