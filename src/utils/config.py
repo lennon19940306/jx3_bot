@@ -14,7 +14,6 @@ def config_init():
     global config
     configf: Optional[dict[str, dict[str, Union[str, int, bool]]]] = None
     config2: Optional[dict[str, dict[str, Union[str, int, bool]]]] = None
-    # config3: Optional[dict[str, dict[str, Union[str, int, bool]]]] = Optional[dict[str, dict[str, Union[str, int, bool]]]]()
     with open('config.yml', 'r', encoding='utf-8') as f:
         cfg = f.read()
         configf = yaml.load(cfg, Loader=yaml.FullLoader)
