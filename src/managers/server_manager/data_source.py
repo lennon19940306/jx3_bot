@@ -66,7 +66,7 @@ async def _task():
         while True:
             data_recv = await ws_connect.recv()
             data = json.loads(data_recv)
-            msg_type: int = data['type']
+            msg_type: int = data['action']
             event = None
             logger.info(f'jx3_api > [{data}]')
             for event_type in Jx3EventList:
@@ -94,7 +94,7 @@ def _get_recv_log(data: dict) -> str:
     '''
     返回服务器推送日志
     '''
-    recv_type = data.get('type')
+    recv_type = data.get('action')
     recv_data: dict = data.get('data')
     if recv_type == 2001:
         server = recv_data.get('server')
